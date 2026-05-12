@@ -113,8 +113,11 @@ export function ChatPanel() {
                   <span className="text-[10px] text-zinc-500">
                     {format(new Date(msg.timestamp), "HH:mm")}
                   </span>
+                  {isContact && (
+                    <span className="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">Eleitor(a)</span>
+                  )}
                   {!isContact && isBot && (
-                    <span className="text-[10px] text-zinc-400 bg-zinc-800 px-1.5 py-0.5 rounded">Bot</span>
+                    <span className="text-[10px] text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded">IA Eleitoral</span>
                   )}
                 </div>
                 <div 

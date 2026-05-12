@@ -142,19 +142,36 @@ export function initializeWhatsAppWeb(io: any) {
   client.on('message', async (msg) => {
     if (msg.from === 'status@broadcast' || !msg.body) return;
     const senderId = msg.from;
+
+    // Tenta obter info do contato para personalizar a IA
+    let contactName = "Eleitor(a)";
+    try {
+      const contact = await msg.getContact();
+      contactName = contact.pushname || contact.name || "Eleitor(a)";
+    } catch (e) {
+      console.warn('[WA Web] Erro ao obter contato:', e);
+    }
+
     if (ioInstance) {
       ioInstance.emit('new_message', {
-        contactId: senderId, provider: 'whatsapp',
-        text: msg.body, sender: 'contact',
+        contactId: senderId, 
+        contactName: contactName, // Envia o nome real para o frontend criar o contato certo
+        provider: 'whatsapp',
+        text: msg.body, 
+        sender: 'contact',
         timestamp: new Date().toISOString()
       });
     }
+
     try {
-      const iaResponse = await generateRagResponse(msg.body, 'wa_web');
+      const iaResponse = await generateRagResponse(msg.body, 'wa_web', { name: contactName });
+      
       if (ioInstance) {
         ioInstance.emit('new_message', {
-          contactId: senderId, provider: 'whatsapp',
-          text: iaResponse, sender: 'bot',
+          contactId: senderId, 
+          provider: 'whatsapp',
+          text: iaResponse, 
+          sender: 'bot',
           timestamp: new Date().toISOString()
         });
       }

@@ -533,18 +533,13 @@ export function ChannelsPanel() {
       </div>
     </div>
 
-    {/* Modal de Configuração de Canal */}
-    {configModalChannel && (() => {
-      const ch = channels.find(c => c.id === configModalChannel);
-      if (!ch) return null;
-      return (
-        <ChannelConfigModal
-          channel={ch}
-          onSave={(data) => configureChannel(configModalChannel, data)}
-          onClose={() => setConfigModalChannel(null)}
-        />
-      );
-    })()}
+    {configModalChannel && channels.find(c => c.id === configModalChannel) && (
+      <ChannelConfigModal
+        channel={channels.find(c => c.id === configModalChannel)!}
+        onSave={(data) => configureChannel(configModalChannel, data)}
+        onClose={() => setConfigModalChannel(null)}
+      />
+    )}
     </>
   );
 }

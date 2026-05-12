@@ -67,7 +67,7 @@ type AppState = {
   setActiveTicket: (id: string | null) => void;
   moveTicket: (ticketId: string, destStage: Stage) => void;
   sendMessage: (ticketId: string, text: string, sender?: 'human' | 'bot') => void;
-  receiveMessage: (contactId: string, text: string, sender?: 'contact' | 'bot' | 'human') => void;
+  receiveMessage: (contactId: string, text: string, sender?: 'contact' | 'bot' | 'human', contactName?: string) => void;
   connectInstagram: () => void;
   configureChannel: (channelId: string, data: Partial<ChannelInfo>) => void;
   addRagDocument: (doc: Omit<RagDocument, 'id' | 'status' | 'uploadDate'>) => void;
@@ -188,15 +188,18 @@ export const useStore = create<AppState>()(
     };
   }),
 
-  receiveMessage: (contactId, text, sender = 'contact') => set((state) => {
+  receiveMessage: (contactId, text, sender = 'contact', contactName) => set((state) => {
     // Check if contact exists, if not create it
     let newContacts = { ...state.contacts };
     if (!newContacts[contactId]) {
       newContacts[contactId] = {
         id: contactId,
-        name: `Contato ${contactId.slice(0, 4)}`,
+        name: contactName || `Contato ${contactId.slice(0, 4)}`,
         number: contactId,
       };
+    } else if (contactName && newContacts[contactId].name.startsWith('Contato ')) {
+      // Atualiza o nome se antes era o padrão genérico
+      newContacts[contactId].name = contactName;
     }
 
     // Find open ticket for contact

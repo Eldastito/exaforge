@@ -29,11 +29,26 @@ interface DocumentChunk {
 const vectorStore: DocumentChunk[] = [];
 
 /**
- * Divide o texto em chunks por parágrafo
+ * Divide o texto em chunks por parágrafo e garante que nenhum chunk seja excessivamente grande.
  */
-function splitIntoChunks(text: string): string[] {
+function splitIntoChunks(text: string, maxChunkLength: number = 4000): string[] {
   const paragraphs = text.split(/\n\s*\n/);
-  return paragraphs.filter(p => p.trim().length > 0);
+  const chunks: string[] = [];
+  
+  for (const p of paragraphs) {
+    const trimmed = p.trim();
+    if (!trimmed) continue;
+    
+    if (trimmed.length > maxChunkLength) {
+      // Se um parágrafo for gigante, quebra ele em partes menores
+      for (let i = 0; i < trimmed.length; i += maxChunkLength) {
+        chunks.push(trimmed.substring(i, i + maxChunkLength));
+      }
+    } else {
+      chunks.push(trimmed);
+    }
+  }
+  return chunks;
 }
 
 /**
@@ -42,10 +57,10 @@ function splitIntoChunks(text: string): string[] {
 export async function processDocument(fileBuffer: Buffer, fileName: string, channelId: string = 'global') {
   const client = getOpenAI();
 
-  // 1. Extração de texto (TXT/CSV; para PDF seria necessário um parser como pdf-parse)
+  // 1. Extração de texto
   const text = fileBuffer.toString('utf-8');
 
-  // 2. Chunks
+  // 2. Chunks (agora com proteção de tamanho)
   const chunks = splitIntoChunks(text);
   if (chunks.length === 0) {
     throw new Error("Documento vazio ou sem conteúdo legível.");
@@ -112,32 +127,42 @@ export async function searchContext(query: string, channelId: string, topK: numb
 /**
  * RAG completo: busca contexto + geração de resposta via OpenAI
  */
-export async function generateRagResponse(userMessage: string, channelId: string): Promise<string> {
+export async function generateRagResponse(userMessage: string, channelId: string, leadInfo?: { name?: string }): Promise<string> {
   const client = getOpenAI();
 
   const contextChunks = await searchContext(userMessage, channelId);
   const contextText = contextChunks.length > 0
     ? contextChunks.join('\n\n---\n\n')
-    : "Nenhum documento adicional encontrado na base de conhecimento.";
+    : "Nenhum dado específico encontrado na base. Responda cordialmente com base nos conhecimentos gerais da campanha.";
+
+  const leadName = leadInfo?.name || "Eleitor(a)";
 
   const response = await client.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [
       {
         role: "system",
-        content: `Você é um assistente de IA humanizado representando nossa empresa via WhatsApp/Instagram.
-Use o CONTEXTO abaixo para responder à pergunta do cliente.
-Se a resposta não estiver no contexto, diga educadamente que vai transferir para um atendente humano.
-Seja conciso, educado e formate a resposta para chat.
+        content: `Você é um assessor de campanha política humanizado e inteligente. 
+Seu objetivo é conversar com o eleitor(a) de forma cordial, empática e prestativa.
 
-CONTEXTO:
+Estamos conversando com: ${leadName}. Use o nome dele(a) ocasionalmente para ser mais próximo.
+
+Use o CONTEXTO abaixo (extraído da nossa base de conhecimento) para fundamentar suas respostas.
+Se a informação solicitada não estiver no contexto, seja honesto e diga que não tem essa informação agora, mas que pode anotar o contato para um assessor humano retornar.
+
+Diretrizes:
+1. Responda como um humano, não use linguagem robótica.
+2. Seja conciso mas acolhedor.
+3. Chame o contato de eleitor(a) se não souber o nome, mas aqui o nome identificado é: ${leadName}.
+
+CONTEXTO DA CAMPANHA:
 ${contextText}`
       },
       { role: "user", content: userMessage }
     ],
-    max_tokens: 300,
+    max_tokens: 400,
     temperature: 0.7,
   });
 
-  return response.choices[0]?.message?.content?.trim() || "Desculpe, ocorreu um erro ao gerar a resposta.";
+  return response.choices[0]?.message?.content?.trim() || "Desculpe, tive um problema técnico. Posso te ajudar em algo mais?";
 }

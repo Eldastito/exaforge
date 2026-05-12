@@ -21,10 +21,10 @@ export default function App() {
       console.log('Conectado ao servidor via WebSocket', socket.id);
     });
 
-    socket.on('new_message', (data: { contactId: string; provider: string; text: string; sender: string }) => {
+    socket.on('new_message', (data: { contactId: string; contactName?: string; provider: string; text: string; sender: string }) => {
       console.log('Recebido novo evento via WebSocket:', data);
       // Usa ref para não ter receiveMessage como dep do useEffect
-      receiveMessageRef.current(data.contactId, data.text, data.sender as any);
+      receiveMessageRef.current(data.contactId, data.text, data.sender as any, data.contactName);
     });
 
     return () => {
