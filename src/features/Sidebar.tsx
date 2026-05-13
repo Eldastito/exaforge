@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, MessageSquare, Users, BarChart3, Settings, LogOut, Bell, Webhook } from 'lucide-react';
+import { Layers, MessageSquare, Users, BarChart3, Settings, LogOut, Bell, Webhook, CalendarDays } from 'lucide-react';
 import { useStore } from '@/src/store/useStore';
 
 export function Sidebar() {
@@ -24,6 +24,7 @@ export function Sidebar() {
              <NavItem icon={<Webhook />} label="Canais e I.A." active={viewMode === 'channels'} onClick={() => setViewMode('channels')} />
              <NavItem icon={<Users />} label="Contatos" active={viewMode === 'contacts'} onClick={() => setViewMode('contacts')} />
              <NavItem icon={<BarChart3 />} label="Dashboard" active={viewMode === 'dashboard'} onClick={() => setViewMode('dashboard')} />
+             <NavItem icon={<CalendarDays />} label="Agenda" active={viewMode === 'agenda'} onClick={() => setViewMode('agenda')} />
           </nav>
         </div>
         

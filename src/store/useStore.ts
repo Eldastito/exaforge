@@ -29,7 +29,7 @@ export type Ticket = {
   unreadCount: number;
 };
 
-export type ViewMode = 'kanban' | 'channels' | 'dashboard' | 'contacts';
+export type ViewMode = 'kanban' | 'channels' | 'dashboard' | 'contacts' | 'agenda';
 
 export type ChannelInfo = {
   id: string;

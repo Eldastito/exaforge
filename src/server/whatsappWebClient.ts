@@ -3,8 +3,13 @@ const { Client, LocalAuth } = pkg as any;
 import qrcode from 'qrcode';
 import { existsSync } from 'fs';
 import { generateRagResponse } from './geminiRAG.js';
+import { handleAgendaMessage } from './agendaAgent.js';
+import { initAgendaScheduler, stopAgendaScheduler } from './agendaScheduler.js';
 
-let client: Client | null = null;
+// Número do Daniel Soranz (sem formatação, apenas dígitos + @c.us)
+const AGENDA_ADMIN_JID = `${(process.env.AGENDA_ADMIN_NUMBER || '5521972425118').replace(/\D/g, '')}@c.us`;
+
+export let client: Client | null = null;
 let ioInstance: any = null;
 let currentQrUrl: string | null = null;
 let clientStatus: 'disconnected' | 'connecting' | 'connected' = 'disconnected';
@@ -127,6 +132,8 @@ export async function initializeWhatsAppWeb(io: any) {
     currentQrUrl = null;
     if (initTimeout) { clearTimeout(initTimeout); initTimeout = null; }
     emitStatus('connected');
+    // Inicializa o scheduler de agenda agora que o client está pronto
+    initAgendaScheduler(client).catch(e => console.error('[WA Web] Erro ao iniciar scheduler:', e));
   });
 
   client.on('authenticated', () => {
@@ -142,6 +149,7 @@ export async function initializeWhatsAppWeb(io: any) {
   client.on('disconnected', (reason) => {
     console.log('[WA Web] Desconectado', reason);
     emitStatus('disconnected');
+    stopAgendaScheduler();
     resetState();
   });
 
@@ -154,6 +162,38 @@ export async function initializeWhatsAppWeb(io: any) {
   client.on('message', async (msg) => {
     if (msg.from === 'status@broadcast') return;
     const senderId = msg.from;
+
+    // ── ROTEADOR DE AGENDA ─────────────────────────────────────────────────
+    // Se a mensagem vem do Daniel Soranz, vai para o agendaAgent.
+    // Todo o restante do fluxo (eleitorado) permanece 100% inalterado.
+    if (senderId === AGENDA_ADMIN_JID) {
+      let incomingText = msg.body || '';
+      if (msg.hasMedia) {
+        try {
+          const media = await msg.downloadMedia();
+          if (media?.mimetype.startsWith('audio/')) {
+            const { transcribeAudio } = await import('./geminiRAG.js');
+            const transcription = await transcribeAudio(Buffer.from(media.data, 'base64'));
+            incomingText = transcription;
+            console.log(`[Agenda] Áudio do Daniel transcrito: ${transcription}`);
+          }
+        } catch (mediaError) {
+          console.error('[Agenda] Erro ao transcrever áudio do Daniel:', mediaError);
+        }
+      }
+      if (!incomingText) return;
+      try {
+        const agendaResponse = await handleAgendaMessage(incomingText);
+        await client?.sendMessage(msg.from, agendaResponse);
+        if (ioInstance) ioInstance.emit('agenda_updated', { timestamp: new Date().toISOString() });
+        console.log(`[Agenda] Respondido ao Daniel: ${agendaResponse.substring(0, 80)}...`);
+      } catch (e) {
+        console.error('[Agenda] Erro ao processar mensagem da agenda:', e);
+        await client?.sendMessage(msg.from, '❌ Erro ao processar. Tente novamente.');
+      }
+      return; // NÃO continua para o fluxo da IA de campanha
+    }
+    // ── FIM DO ROTEADOR ────────────────────────────────────────────────────
 
     // Tenta obter info do contato para personalizar a IA
     let contactName = "Eleitor(a)";

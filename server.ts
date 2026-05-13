@@ -6,6 +6,7 @@ import path from "path";
 import { Server as SocketIOServer } from "socket.io";
 import multer from "multer";
 import { processDocument, generateRagResponse } from "./src/server/geminiRAG.js";
+import { loadAgenda, addEvent, updateEvent, deleteEvent, type AgendaEvent } from "./src/server/agendaAgent.js";
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -161,6 +162,67 @@ async function startServer() {
       const { disconnectWhatsAppWeb } = await import("./src/server/whatsappWebClient.js");
       disconnectWhatsAppWeb();
       res.json({ success: true, message: 'Desconectado.' });
+    } catch (e) {
+      res.status(500).json({ error: (e as Error).message });
+    }
+  });
+
+  // --- AGENDA ENDPOINTS ---
+  // GET todos os eventos
+  app.get("/api/agenda", (req, res) => {
+    try {
+      const events = loadAgenda();
+      res.json(events);
+    } catch (e) {
+      res.status(500).json({ error: (e as Error).message });
+    }
+  });
+
+  // POST criar evento
+  app.post("/api/agenda", (req, res) => {
+    try {
+      const body = req.body as Omit<AgendaEvent, 'id' | 'createdAt' | 'updatedAt'>;
+      if (!body.title || !body.date || !body.time) {
+        return res.status(400).json({ error: 'Campos obrigatórios: title, date, time' });
+      }
+      const newEvent = addEvent(body);
+      io.emit('agenda_updated', { timestamp: new Date().toISOString() });
+      res.status(201).json(newEvent);
+    } catch (e) {
+      res.status(500).json({ error: (e as Error).message });
+    }
+  });
+
+  // PATCH atualizar evento
+  app.patch("/api/agenda/:id", (req, res) => {
+    try {
+      const updated = updateEvent(req.params.id, req.body);
+      if (!updated) return res.status(404).json({ error: 'Evento não encontrado' });
+      io.emit('agenda_updated', { timestamp: new Date().toISOString() });
+      res.json(updated);
+    } catch (e) {
+      res.status(500).json({ error: (e as Error).message });
+    }
+  });
+
+  // DELETE remover evento
+  app.delete("/api/agenda/:id", (req, res) => {
+    try {
+      const deleted = deleteEvent(req.params.id);
+      if (!deleted) return res.status(404).json({ error: 'Evento não encontrado' });
+      io.emit('agenda_updated', { timestamp: new Date().toISOString() });
+      res.json({ success: true });
+    } catch (e) {
+      res.status(500).json({ error: (e as Error).message });
+    }
+  });
+
+  // POST teste: enviar resumo diário manualmente
+  app.post("/api/agenda/test/daily-summary", async (req, res) => {
+    try {
+      const { sendDailySummary } = await import("./src/server/agendaScheduler.js");
+      await sendDailySummary();
+      res.json({ success: true, message: 'Resumo diário enviado.' });
     } catch (e) {
       res.status(500).json({ error: (e as Error).message });
     }

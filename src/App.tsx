@@ -5,6 +5,7 @@ import { ChatPanel } from '@/src/features/ChatPanel';
 import { ChannelsPanel } from '@/src/features/ChannelsPanel';
 import { DashboardPanel } from '@/src/features/DashboardPanel';
 import { ContactsPanel } from '@/src/features/ContactsPanel';
+import { AgendaPanel } from '@/src/features/AgendaPanel';
 import { useStore } from '@/src/store/useStore';
 import { Search } from 'lucide-react';
 import io from 'socket.io-client';
@@ -44,6 +45,7 @@ export default function App() {
              {viewMode === 'channels' && 'Canais e IA'}
              {viewMode === 'dashboard' && 'Dashboard'}
              {viewMode === 'contacts' && 'Contatos'}
+             {viewMode === 'agenda' && 'Agenda do Deputado'}
            </h1>
            <div className="flex items-center gap-4">
               <div className="relative">
@@ -68,6 +70,7 @@ export default function App() {
           )}
           {viewMode === 'dashboard' && <DashboardPanel />}
           {viewMode === 'contacts' && <ContactsPanel />}
+          {viewMode === 'agenda' && <AgendaPanel />}
 
           {/*
             ChannelsPanel: SEMPRE montado para preservar estado do QR Code / conexão WA.
