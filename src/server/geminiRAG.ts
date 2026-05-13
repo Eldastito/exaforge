@@ -197,5 +197,3 @@ ${contextText}`
 
   return response.choices[0]?.message?.content?.trim() || "Posso te ajudar em algo mais?";
 }
-écnico. Posso te ajudar em algo mais?";
-}
