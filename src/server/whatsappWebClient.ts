@@ -6,8 +6,62 @@ import { generateRagResponse } from './geminiRAG.js';
 import { handleAgendaMessage } from './agendaAgent.js';
 import { initAgendaScheduler, stopAgendaScheduler } from './agendaScheduler.js';
 
-// Número do Daniel Soranz (sem formatação, apenas dígitos + @c.us)
-const AGENDA_ADMIN_JID = `${(process.env.AGENDA_ADMIN_NUMBER || '5521972425118').replace(/\D/g, '')}@c.us`;
+// Número do admin da agenda (apenas dígitos)
+const AGENDA_ADMIN_RAW = (process.env.AGENDA_ADMIN_NUMBER || '5521972425118').replace(/\D/g, '');
+
+/**
+ * Verifica se a mensagem vem do admin da agenda (Daniel Soranz).
+ * Usa múltiplos fallbacks para contornar LIDs do WhatsApp (ex: 265...@lid).
+ * Loga o identificador real encontrado para facilitar diagnóstico.
+ */
+async function isFromAgendaAdmin(msg: any): Promise<boolean> {
+  // Coleta todos os candidatos disponíveis sem chamada extra
+  const quickCandidates: string[] = [
+    msg.from || '',
+    msg.author || '',
+    msg._data?.from || '',
+    msg._data?.author || '',
+    msg._data?.id?.participant || '',
+  ];
+
+  for (const c of quickCandidates) {
+    if (!c) continue;
+    const digits = c.replace(/[^\d]/g, '');
+    if (digits.length >= 8 && AGENDA_ADMIN_RAW.endsWith(digits.slice(-9))) {
+      console.log(`[Agenda] ✅ Admin identificado (quick) via: ${c}`);
+      return true;
+    }
+  }
+
+  // Fallback: resolve o contato real (necessário quando msg.from é um LID)
+  try {
+    const contact = await msg.getContact();
+    const deepCandidates: string[] = [
+      contact.id?._serialized || '',
+      contact.number || '',
+      contact.id?.user || '',
+      String(contact.id?.server === 'c.us' ? contact.id?._serialized : ''),
+    ];
+
+    for (const c of deepCandidates) {
+      if (!c) continue;
+      const digits = c.replace(/[^\d]/g, '');
+      if (digits.length >= 8 && AGENDA_ADMIN_RAW.endsWith(digits.slice(-9))) {
+        console.log(`[Agenda] ✅ Admin identificado (contact) via: ${c}`);
+        return true;
+      }
+    }
+
+    // Log de diagnóstico: mostra o que realmente chegou para facilitar depuração
+    console.log(
+      `[Agenda] 🔍 Diagnóstico – msg.from=${msg.from} | contact.number=${contact.number} | contact.id=${contact.id?._serialized} | admin esperado=...${AGENDA_ADMIN_RAW.slice(-9)}`
+    );
+  } catch (e) {
+    console.warn('[Agenda] ⚠️  Não foi possível resolver contato para checagem de admin:', e);
+  }
+
+  return false;
+}
 
 export let client: Client | null = null;
 let ioInstance: any = null;
@@ -166,7 +220,7 @@ export async function initializeWhatsAppWeb(io: any) {
     // ── ROTEADOR DE AGENDA ─────────────────────────────────────────────────
     // Se a mensagem vem do Daniel Soranz, vai para o agendaAgent.
     // Todo o restante do fluxo (eleitorado) permanece 100% inalterado.
-    if (senderId === AGENDA_ADMIN_JID) {
+    if (await isFromAgendaAdmin(msg)) {
       let incomingText = msg.body || '';
       if (msg.hasMedia) {
         try {

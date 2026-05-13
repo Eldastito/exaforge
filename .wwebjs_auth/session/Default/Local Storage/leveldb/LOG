@@ -1,3 +1,8 @@
-2026/05/13-10:40:38.631 74c0 Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
-2026/05/13-10:40:38.635 74c0 Recovering log #6
-2026/05/13-10:40:38.638 74c0 Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Local Storage\leveldb/000006.log 
+2026/05/13-11:40:25.065 5eb4 Creating DB C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Local Storage\leveldb since it was missing.
+2026/05/13-11:40:25.089 5eb4 Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
+2026/05/13-11:40:25.092 5eb4 Recovering log #6
+2026/05/13-11:40:25.098 5eb4 Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Local Storage\leveldb/000006.log 
+2026/05/13-11:40:25.099 5eb4 Delete type=2 #7
+2026/05/13-11:42:26.343 394c Level-0 table #8: started
+2026/05/13-11:42:26.351 394c Level-0 table #8: 18561 bytes OK
+2026/05/13-11:42:26.355 394c Delete type=0 #6
