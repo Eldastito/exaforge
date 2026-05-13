@@ -6,3 +6,10 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# WhatsApp Web - sessão local do Chrome (não deve ir ao repositório)
+.wwebjs_auth/
+.wwebjs_cache/
+
+# Dados locais da agenda (persistência local, não sobe para o repo)
+agenda.json

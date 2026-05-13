@@ -1,4 +1,0 @@
-2026/05/13-11:40:24.990 35b8 Creating DB C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Sync Data\LevelDB since it was missing.
-2026/05/13-11:40:25.011 35b8 Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Sync Data\LevelDB/MANIFEST-000001
-2026/05/13-11:40:25.013 35b8 Recovering log #3
-2026/05/13-11:40:25.014 35b8 Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Sync Data\LevelDB/000003.log 
