@@ -1,14 +1,14 @@
-2026/05/12-23:12:08.699 9d1c Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2026/05/12-23:12:08.699 9d1c Recovering log #311
-2026/05/12-23:12:08.863 9d1c Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000311.log 
-2026/05/12-23:13:15.234 9d1c Level-0 table #317: started
-2026/05/12-23:13:15.292 9d1c Level-0 table #317: 1261102 bytes OK
-2026/05/12-23:13:15.297 9d1c Delete type=0 #311
-2026/05/12-23:15:47.893 1c10 Compacting 1@1 + 2@2 files
-2026/05/12-23:15:47.955 1c10 Generated table #318@1: 43727 keys, 2201915 bytes
-2026/05/12-23:15:47.971 1c10 Generated table #319@1: 19774 keys, 638432 bytes
-2026/05/12-23:15:47.971 1c10 Compacted 1@1 + 2@2 files => 2840347 bytes
-2026/05/12-23:15:47.972 1c10 compacted to: files[ 0 0 2 0 0 0 0 ]
-2026/05/12-23:15:47.972 1c10 Delete type=2 #313
-2026/05/12-23:15:47.972 1c10 Delete type=2 #314
-2026/05/12-23:15:47.972 1c10 Delete type=2 #317
+2026/05/12-23:17:46.565 10f68 Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/05/12-23:17:46.566 10f68 Recovering log #316
+2026/05/12-23:17:46.589 10f68 Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000316.log 
+2026/05/12-23:18:08.590 10f68 Level-0 table #322: started
+2026/05/12-23:18:08.658 10f68 Level-0 table #322: 1272134 bytes OK
+2026/05/12-23:18:08.666 10f68 Delete type=0 #316
+2026/05/12-23:18:11.082 10f68 Compacting 1@1 + 2@2 files
+2026/05/12-23:18:11.244 10f68 Generated table #323@1: 43623 keys, 2199877 bytes
+2026/05/12-23:18:11.291 10f68 Generated table #324@1: 21072 keys, 680779 bytes
+2026/05/12-23:18:11.291 10f68 Compacted 1@1 + 2@2 files => 2880656 bytes
+2026/05/12-23:18:11.294 10f68 compacted to: files[ 0 0 2 0 0 0 0 ]
+2026/05/12-23:18:11.295 10f68 Delete type=2 #318
+2026/05/12-23:18:11.296 10f68 Delete type=2 #319
+2026/05/12-23:18:11.296 10f68 Delete type=2 #322

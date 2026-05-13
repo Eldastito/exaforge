@@ -107,9 +107,6 @@ export async function processDocument(fileBuffer: Buffer, fileName: string, chan
  */
 export async function transcribeAudio(audioBuffer: Buffer): Promise<string> {
   const client = getOpenAI();
-  
-  // Whisper espera um arquivo real ou stream com nome/mimetype
-  // Criamos um File fake para o SDK do Node
   const file = await OpenAI.toFile(audioBuffer, "audio.ogg", { type: "audio/ogg" });
 
   const response = await client.audio.transcriptions.create({
@@ -137,7 +134,7 @@ function cosineSimilarity(A: number[], B: number[]): number {
 /**
  * Busca os N chunks mais relevantes
  */
-export async function searchContext(query: string, channelId: string, topK: number = 5): Promise<string[]> {
+export async function searchContext(query: string, channelId: string, topK: number = 6): Promise<string[]> {
   const client = getOpenAI();
   if (vectorStore.length === 0) return [];
 
@@ -152,22 +149,29 @@ export async function searchContext(query: string, channelId: string, topK: numb
     .filter(doc => doc.metadata.channelId === 'global' || doc.metadata.channelId === channelId)
     .map(doc => ({ text: doc.text, score: cosineSimilarity(queryVec, doc.embedding) }))
     .sort((a, b) => b.score - a.score)
-    .filter(d => d.score > 0.3) // Filtro de relevância mínima
     .slice(0, topK);
 
   return relevantDocs.map(d => d.text);
 }
 
 /**
- * RAG completo: busca contexto + geração de resposta
+ * RAG completo: busca contexto + geração de resposta com histórico
  */
-export async function generateRagResponse(userMessage: string, channelId: string, leadInfo?: { name?: string }): Promise<string> {
+export async function generateRagResponse(
+  userMessage: string, 
+  channelId: string, 
+  leadInfo?: { name?: string },
+  history: string = ""
+): Promise<string> {
   const client = getOpenAI();
-  const contextChunks = await searchContext(userMessage, channelId);
+  
+  // Busca contexto baseado na pergunta atual E um pouco do histórico se houver
+  const searchQueries = history ? `${history.split('\n').slice(-2).join('\n')}\n${userMessage}` : userMessage;
+  const contextChunks = await searchContext(searchQueries, channelId, 6);
   
   const contextText = contextChunks.length > 0
     ? contextChunks.join('\n\n')
-    : "Diga apenas que é assessor do Daniel Soranz e pergunte como pode ajudar, pois não encontrou detalhes específicos sobre este assunto na base.";
+    : "INFORMAÇÃO: Não há dados específicos no manual para esta pergunta. Responda como Assessor do Daniel Soranz, seja gentil, e diga que vai verificar com a coordenação técnica.";
 
   const leadName = leadInfo?.name || "Eleitor(a)";
 
@@ -176,24 +180,31 @@ export async function generateRagResponse(userMessage: string, channelId: string
     messages: [
       {
         role: "system",
-        content: `Você é um assessor direto do candidato Daniel Soranz. 
-Sua missão é dar respostas CURTAS, DIRETAS e sempre baseadas no contexto abaixo.
+        content: `Você é o Assessor Digital do Deputado Federal Daniel Soranz.
+Seu tom de voz deve ser: ACOLHEDOR, TÉCNICO e BASEADO EM DADOS.
 
-Regras de Ouro:
-1. Responda em no máximo 2 ou 3 frases curtas.
-2. Seja objetivo. Se a resposta estiver no contexto, use-a. 
-3. Se não souber, diga: "Ainda não tenho essa informação confirmada, mas posso anotar para nossa equipe te responder."
-4. Trate o eleitor pelo nome (${leadName}) de forma natural.
-5. Foco total em propostas e ações do Daniel Soranz.
+Diretrizes de Personalidade (Baseadas no Dossiê):
+1. Daniel Soranz é Médico Sanitarista, focado em Ciência e Eficiência na Gestão Pública.
+2. Ele defende a Saúde como política de Estado, técnica e imune a ideologias partidárias extremas.
+3. Principais bandeiras: Clínicas da Família, Cegonha Carioca, Centros de Autismo (TEA) e base em dados (CIE).
 
-CONTEXTO:
-${contextText}`
+Regras de Conversação:
+- Responda de forma CURTA (máximo 3 frases).
+- Seja SEMPRE objetivo. Se a resposta estiver no contexto técnico, use-a.
+- Trate o eleitor pelo nome (${leadName}) de forma natural.
+- Use o histórico recente para manter a coerência da conversa.
+
+CONTEXTO TÉCNICO (Dossiê/RAG):
+${contextText}
+
+HISTÓRICO RECENTE:
+${history || "Início de conversa."}`
       },
       { role: "user", content: userMessage }
     ],
-    max_tokens: 250,
-    temperature: 0.5, // Menos criatividade, mais precisão
+    max_tokens: 300,
+    temperature: 0.6,
   });
 
-  return response.choices[0]?.message?.content?.trim() || "Posso te ajudar em algo mais?";
+  return response.choices[0]?.message?.content?.trim() || "Como posso ajudar você e o Daniel Soranz hoje?";
 }

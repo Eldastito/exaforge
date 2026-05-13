@@ -255,7 +255,19 @@ export async function initializeWhatsAppWeb(io: any) {
       } else if (incomingText === "[Enviou um arquivo]") {
         iaResponse = `Recebi seu arquivo, ${contactName}. Vou encaminhar para nossa equipe analisar. Em que mais posso te ajudar?`;
       } else {
-        iaResponse = await generateRagResponse(incomingText, 'wa_web', { name: contactName });
+        // Captura o histórico recente do chat para dar contexto à IA
+        let historyText = "";
+        try {
+          const chat = await msg.getChat();
+          const recentMessages = await chat.fetchMessages({ limit: 6 });
+          historyText = recentMessages
+            .map(m => `${m.fromMe ? 'Assessor' : 'Eleitor'}: ${m.body}`)
+            .join('\n');
+        } catch (hError) {
+          console.warn('[WA Web] Erro ao buscar histórico:', hError);
+        }
+
+        iaResponse = await generateRagResponse(incomingText, 'wa_web', { name: contactName }, historyText);
       }
       
       if (ioInstance) {
