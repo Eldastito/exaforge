@@ -53,7 +53,7 @@ function destroyClient() {
   resetState();
 }
 
-export function initializeWhatsAppWeb(io: any) {
+export async function initializeWhatsAppWeb(io: any) {
   if (client) {
     console.log('[WA Web] Client already exists.');
     return;

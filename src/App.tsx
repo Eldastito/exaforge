@@ -4,6 +4,7 @@ import { KanbanBoard } from '@/src/features/KanbanBoard';
 import { ChatPanel } from '@/src/features/ChatPanel';
 import { ChannelsPanel } from '@/src/features/ChannelsPanel';
 import { DashboardPanel } from '@/src/features/DashboardPanel';
+import { ContactsPanel } from '@/src/features/ContactsPanel';
 import { useStore } from '@/src/store/useStore';
 import { Search } from 'lucide-react';
 import io from 'socket.io-client';
@@ -42,6 +43,7 @@ export default function App() {
              {viewMode === 'kanban' && 'Atendimento'}
              {viewMode === 'channels' && 'Canais e IA'}
              {viewMode === 'dashboard' && 'Dashboard'}
+             {viewMode === 'contacts' && 'Contatos'}
            </h1>
            <div className="flex items-center gap-4">
               <div className="relative">
@@ -65,6 +67,7 @@ export default function App() {
             </>
           )}
           {viewMode === 'dashboard' && <DashboardPanel />}
+          {viewMode === 'contacts' && <ContactsPanel />}
 
           {/*
             ChannelsPanel: SEMPRE montado para preservar estado do QR Code / conexão WA.

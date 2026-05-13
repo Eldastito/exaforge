@@ -28,7 +28,7 @@ export type Ticket = {
   unreadCount: number;
 };
 
-export type ViewMode = 'kanban' | 'channels' | 'dashboard';
+export type ViewMode = 'kanban' | 'channels' | 'dashboard' | 'contacts';
 
 export type ChannelInfo = {
   id: string;

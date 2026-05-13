@@ -7,6 +7,8 @@ import { format } from 'date-fns';
 import io from 'socket.io-client';
 import { ChannelConfigModal } from '@/src/components/ChannelConfigModal';
 
+export type ViewMode = 'kanban' | 'channels' | 'dashboard' | 'contacts';
+
 export function ChannelsPanel() {
   const { channels, connectInstagram, ragDocuments, addRagDocument, configureChannel } = useStore();
   const [isConnecting, setIsConnecting] = useState(false);
@@ -292,21 +294,21 @@ export function ChannelsPanel() {
             </div>
 
             <div className="mt-6 pt-6 border-t border-slate-800 flex gap-3 relative z-10">
-              {waWebStatus === 'connected' ? (
-                <Button variant="outline" className="w-full bg-slate-950 border-red-500/20 text-red-400 hover:text-white hover:bg-red-500" onClick={handleDisconnectWaWeb}>
-                  Desconectar
+              {waWebStatus === 'connected' || waWebStatus === 'error' ? (
+                <Button 
+                  variant="outline" 
+                  className="w-full bg-slate-950 border-red-500/20 text-red-400 hover:text-white hover:bg-red-500" 
+                  onClick={handleDisconnectWaWeb}
+                >
+                  {waWebStatus === 'error' ? 'Limpar Sessão / Tentar Reset' : 'Desconectar Dispositivo'}
                 </Button>
               ) : waWebStatus === 'connecting' && !waWebQr ? (
                  <Button className="w-full bg-slate-800 text-slate-300 pointer-events-none border-0" disabled>
                    Aguarde... (pode levar ~30s)
                  </Button>
-              ) : waWebStatus === 'error' ? (
-                <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white border-0 transition-colors" onClick={handleConnectWaWeb}>
-                  Tentar Novamente
-                </Button>
               ) : (
                 <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white border-0 transition-colors" onClick={handleConnectWaWeb} disabled={waWebStatus === 'connecting'}>
-                  Gerar QR Code
+                  {waWebStatus === 'error' ? 'Tentar Conectar' : 'Gerar QR Code'}
                 </Button>
               )}
             </div>

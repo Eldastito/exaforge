@@ -22,7 +22,7 @@ export function Sidebar() {
           <nav className="space-y-1">
              <NavItem icon={<MessageSquare />} label="Atendimento" active={viewMode === 'kanban'} onClick={() => setViewMode('kanban')} />
              <NavItem icon={<Webhook />} label="Canais e I.A." active={viewMode === 'channels'} onClick={() => setViewMode('channels')} />
-             <NavItem icon={<Users />} label="Contatos" />
+             <NavItem icon={<Users />} label="Contatos" active={viewMode === 'contacts'} onClick={() => setViewMode('contacts')} />
              <NavItem icon={<BarChart3 />} label="Dashboard" active={viewMode === 'dashboard'} onClick={() => setViewMode('dashboard')} />
           </nav>
         </div>
