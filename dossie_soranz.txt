@@ -1,0 +1,56 @@
+Dossiê Daniel Soranz - v2.0 (2026)
+Base de Conhecimento para RAG e Atendimento Humanizado
+
+1. Perfil e Visão Política Atualizada
+Daniel Ricardo Soranz Pinto é Médico Sanitarista e Deputado Federal (PSD-RJ). Sua atuação é pautada pelo Pragmatismo Científico e pela Eficiência na Gestão Pública.
+Visão Política: Defende que a saúde pública deve ser gerida como uma política de Estado, técnica e imune a ideologias partidárias extremas. Acredita na inovação tecnológica como ferramenta de justiça social e na descentralização do atendimento através da Medicina de Família.
+
+2. Cronologia Recente e Carreira Política
+Ano | Evento / Cargo | Impacto
+2022 | Eleição Federal | Eleito Deputado Federal pelo PSD-RJ (98.784 votos).
+2023-2024 | Retorno à SMS-RJ | Licenciou-se da Câmara para reassumir a Secretaria de Saúde do Rio a convite de Eduardo Paes.
+2025-2026 | Cenário Atual | Foco em pré-candidatura e fortalecimento da rede de hospitais federais e centros de TEA.
+
+3. Pautas e Defesas de Campanha (2026)
+• Saúde Baseada em Dados: Expansão do Centro de Inteligência Epidemiológica para nível nacional.
+• Atenção Especializada: Criação de novos centros municipais para Autismo (TEA) e doenças raras.
+• Gestão Hospitalar: Defesa da cogestão entre Município e União para salvar hospitais federais sucateados.
+• Carreira de Estado: Fortalecimento da carreira de Médico de Família e Comunidade no SUS.
+
+4. Diretrizes para Atendimento Humanizado (RAG)
+A IA deve responder utilizando um tom acolhedor, porém técnico. Deve enfatizar sempre que Soranz prioriza "o que a ciência diz" e "o que o dado mostra". Em casos de dúvida sobre cargos, enfatizar que ele é Deputado Federal dedicado à gestão executiva da saúde.
+
+---
+
+DOSSIÊ DANIEL SORANZ
+Base de Dados para Atendimento Humanizado e RAG
+
+1. Perfil e Formação Acadêmica
+Nome Completo: Daniel Ricardo Soranz Pinto
+Nascimento: 16 de fevereiro de 1979 (Vassouras, RJ)
+Especialidade: Médico Sanitarista, Especialista em Medicina de Família e Comunidade.
+Graduação (2004): Medicina pela FESO (Fundação Educacional Serra dos Órgãos).
+Pós-Graduação: Especialização em Saúde Pública pela ENSP/Fiocruz.
+Mestrado: Saúde Pública pela Fiocruz.
+Doutorado: Epidemiologia pela Fiocruz (Professor e Pesquisador).
+
+2. Trajetória Cronológica
+Período | Cargo / Evento | Destaque
+2009 | Subsecretário de Atenção Primária (RJ) | Início da expansão das Clínicas da Família.
+2009-2016 | Gestão Eduardo Paes | Aumentou cobertura de saúde da família de 3% para 70%.
+2014-2016 | Secretário Municipal de Saúde (1ª vez) | Gestão da saúde durante as Olimpíadas Rio 2016.
+2021-2022 | Secretário Municipal de Saúde (2ª vez) | Liderança no combate à pandemia de COVID-19.
+2022 | Eleição Legislativa | Eleito Deputado Federal (PSD-RJ) com 98 mil votos.
+2023-Atual | Secretário de Saúde (Licenciado da Câmara) | Foco em autismo (TEA) e gestão de hospitais federais.
+
+3. Principais Legados e Programas
+Clínicas da Família: Modelo de atenção primária que se tornou referência internacional.
+Cegonha Carioca: Programa de humanização do parto que garante o transporte da gestante e o enxoval.
+Centro de Inteligência Epidemiológica (CIE): Criado durante a pandemia para monitoramento de dados em tempo real.
+Atendimento TEA (Autismo): Inauguração do primeiro centro público municipal dedicado ao desenvolvimento de crianças com TEA no Rio.
+
+4. Valores de Atendimento (Diretrizes para a AI)
+• Humanização: Falar sobre saúde como um direito básico e acolhimento.
+• Base em Dados: Sempre citar indicadores e monitoramento real (CIE).
+• Territorialização: Entender que a saúde acontece onde a pessoa mora (Clínicas da Família).
+• Resiliência: Referência ao trabalho incansável durante a crise da COVID-19.

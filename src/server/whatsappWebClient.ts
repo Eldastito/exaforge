@@ -192,13 +192,21 @@ export async function initializeWhatsAppWeb(io: any) {
     if (!incomingText && !msg.hasMedia) return;
 
     if (ioInstance) {
-      // Limpa o número (remove @c.us ou @lid)
-      const cleanNumber = senderId.split('@')[0];
+      // Tenta obter o contato real para pegar o número formatado
+      let contactName = msg._data?.notifyName || contact.name || contact.pushname || senderId.split('@')[0];
+      let cleanNumber = contact.number || senderId.split('@')[0];
+
+      // Se for um ID estranho (LID), tenta limpar ou manter o número real
+      if (cleanNumber.includes('lid')) {
+        cleanNumber = cleanNumber.split(':')[0].split('@')[0];
+      }
+
+      console.log(`[WA Web] Mensagem de ${contactName} (${cleanNumber})`);
       
       ioInstance.emit('new_message', {
         contactId: senderId, 
         contactName: contactName,
-        contactNumber: cleanNumber, // Envia o número limpo
+        contactNumber: cleanNumber,
         provider: 'whatsapp',
         text: incomingText, 
         sender: 'contact',

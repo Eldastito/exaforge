@@ -24,6 +24,8 @@ export default defineConfig(({ mode }) => {
           '**/.wwebjs_auth/**',
           '**/.wwebjs_cache/**',
           '**/node_modules/**',
+          '**/vectorStore.json',
+          '**/dossie_soranz.txt'
         ],
       },
     },

@@ -114,10 +114,10 @@ export function ChatPanel() {
                     {format(new Date(msg.timestamp), "HH:mm")}
                   </span>
                   {isContact && (
-                    <span className="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded">Eleitor(a)</span>
+                    <span className="text-[10px] text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded font-bold uppercase tracking-tighter">Eleitor(a)</span>
                   )}
                   {!isContact && isBot && (
-                    <span className="text-[10px] text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded">IA Eleitoral</span>
+                    <span className="text-[10px] text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 rounded font-bold uppercase tracking-tighter">Assessor Daniel Soranz</span>
                   )}
                 </div>
                 <div 

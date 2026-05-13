@@ -108,7 +108,7 @@ export function KanbanBoard() {
                                      {lastMsg?.sender === 'human' ? (
                                        <span className="text-primary/70">Você</span>
                                      ) : lastMsg?.sender === 'bot' ? (
-                                        <span className="text-indigo-400/70 font-semibold">IA Eleitoral</span>
+                                        <span className="text-indigo-400 font-bold uppercase text-[10px] tracking-wider">Assessor Daniel Soranz</span>
                                      ) : (
                                         <span className="text-emerald-400/70 font-semibold">Eleitor(a)</span>
                                      )}
