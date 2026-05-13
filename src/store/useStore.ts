@@ -66,6 +66,7 @@ type AppState = {
   
   setViewMode: (mode: ViewMode) => void;
   setActiveTicket: (id: string | null) => void;
+  deleteTicket: (ticketId: string) => void;
   moveTicket: (ticketId: string, destStage: Stage) => void;
   sendMessage: (ticketId: string, text: string, sender?: 'human' | 'bot') => void;
   receiveMessage: (contactId: string, text: string, sender?: 'contact' | 'bot' | 'human', contactName?: string) => void;
@@ -129,6 +130,16 @@ export const useStore = create<AppState>()(
 
   setViewMode: (mode) => set({ viewMode: mode }),
   setActiveTicket: (id) => set({ activeTicketId: id }),
+
+  deleteTicket: (ticketId) => set((state) => {
+    const { [ticketId]: _removed, ...remainingTickets } = state.tickets;
+    const { [ticketId]: _msgs, ...remainingMessages } = state.messages;
+    return {
+      tickets: remainingTickets,
+      messages: remainingMessages,
+      activeTicketId: state.activeTicketId === ticketId ? null : state.activeTicketId,
+    };
+  }),
 
   connectInstagram: () => {},  // Mantido por compatibilidade — use configureChannel
 

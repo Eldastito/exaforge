@@ -2,12 +2,12 @@ import React from 'react';
 import { useStore } from '@/src/store/useStore';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { Badge } from '@/src/components/ui/badge';
-import { Clock, MessageCircle, User } from 'lucide-react';
+import { Clock, MessageCircle, User, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 export function KanbanBoard() {
-  const { stages, tickets, contacts, messages, moveTicket, setActiveTicket, activeTicketId } = useStore();
+  const { stages, tickets, contacts, messages, moveTicket, setActiveTicket, activeTicketId, deleteTicket } = useStore();
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -76,6 +76,20 @@ export function KanbanBoard() {
                                       {ticket.unreadCount}
                                     </div>
                                   )}
+
+                                  {/* Botão Excluir - aparece no hover */}
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (confirm(`Excluir ticket de ${contact?.name || 'este contato'}?`)) {
+                                        deleteTicket(ticket.id);
+                                      }
+                                    }}
+                                    className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-red-500/20 text-zinc-600 hover:text-red-400 z-10"
+                                    title="Excluir ticket"
+                                  >
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  </button>
                                   
                                   {/* Cabeçalho do Card: Avatar, Nome, Tel e Prioridade */}
                                   <div className="flex items-start justify-between gap-3">
