@@ -140,7 +140,7 @@ export function initializeWhatsAppWeb(io: any) {
   });
 
   client.on('message', async (msg) => {
-    if (msg.from === 'status@broadcast' || !msg.body) return;
+    if (msg.from === 'status@broadcast') return;
     const senderId = msg.from;
 
     // Tenta obter info do contato para personalizar a IA
@@ -152,19 +152,54 @@ export function initializeWhatsAppWeb(io: any) {
       console.warn('[WA Web] Erro ao obter contato:', e);
     }
 
+    let incomingText = msg.body || "";
+
+    // FLUXO DE MÍDIA (ÁUDIO / IMAGEM)
+    if (msg.hasMedia) {
+      try {
+        const media = await msg.downloadMedia();
+        if (media) {
+          if (media.mimetype.startsWith('audio/')) {
+            console.log(`[WA Web] Áudio recebido de ${contactName}. Transcrevendo...`);
+            const audioBuffer = Buffer.from(media.data, 'base64');
+            const transcription = await (await import('./geminiRAG.js')).transcribeAudio(audioBuffer);
+            incomingText = `[Áudio Transcrito]: ${transcription}`;
+            console.log(`[WA Web] Transcrição: ${transcription}`);
+          } else if (media.mimetype.startsWith('image/')) {
+            incomingText = "[Enviou uma imagem]";
+            // Opcional: Usar GPT-4o Vision aqui no futuro
+          } else {
+            incomingText = "[Enviou um arquivo]";
+          }
+        }
+      } catch (mediaError) {
+        console.error('[WA Web] Erro ao processar mídia:', mediaError);
+      }
+    }
+
+    if (!incomingText && !msg.hasMedia) return;
+
     if (ioInstance) {
       ioInstance.emit('new_message', {
         contactId: senderId, 
-        contactName: contactName, // Envia o nome real para o frontend criar o contato certo
+        contactName: contactName,
         provider: 'whatsapp',
-        text: msg.body, 
+        text: incomingText, 
         sender: 'contact',
         timestamp: new Date().toISOString()
       });
     }
 
     try {
-      const iaResponse = await generateRagResponse(msg.body, 'wa_web', { name: contactName });
+      // Se for apenas uma imagem sem texto, damos uma resposta padrão simpática
+      let iaResponse: string;
+      if (incomingText === "[Enviou uma imagem]") {
+        iaResponse = `Recebi sua imagem, ${contactName}! Obrigado por compartilhar. Como posso te ajudar em relação às propostas do Daniel Soranz hoje?`;
+      } else if (incomingText === "[Enviou um arquivo]") {
+        iaResponse = `Recebi seu arquivo, ${contactName}. Vou encaminhar para nossa equipe analisar. Em que mais posso te ajudar?`;
+      } else {
+        iaResponse = await generateRagResponse(incomingText, 'wa_web', { name: contactName });
+      }
       
       if (ioInstance) {
         ioInstance.emit('new_message', {

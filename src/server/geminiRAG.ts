@@ -1,5 +1,7 @@
 import OpenAI from 'openai';
 import { v4 as uuidv4 } from "uuid";
+import { writeFileSync, readFileSync, existsSync } from 'fs';
+import path from 'path';
 
 // Instância lazy — evita crash no import quando OPENAI_API_KEY não está disponível
 let _openai: OpenAI | null = null;
@@ -25,8 +27,28 @@ interface DocumentChunk {
   };
 }
 
-// Banco de dados vetorial em memória (produção: use pgvector ou Pinecone)
-const vectorStore: DocumentChunk[] = [];
+// Banco de dados vetorial (persistência simples para desenvolvimento)
+const VECTOR_STORE_PATH = path.join(process.cwd(), 'vectorStore.json');
+let vectorStore: DocumentChunk[] = [];
+
+// Carrega o banco ao iniciar o módulo
+if (existsSync(VECTOR_STORE_PATH)) {
+  try {
+    const data = readFileSync(VECTOR_STORE_PATH, 'utf-8');
+    vectorStore = JSON.parse(data);
+    console.log(`[RAG] Banco vetorial carregado: ${vectorStore.length} chunks.`);
+  } catch (e) {
+    console.error("[RAG] Erro ao carregar banco vetorial:", e);
+  }
+}
+
+function saveVectorStore() {
+  try {
+    writeFileSync(VECTOR_STORE_PATH, JSON.stringify(vectorStore, null, 2));
+  } catch (e) {
+    console.error("[RAG] Erro ao salvar banco vetorial:", e);
+  }
+}
 
 /**
  * Divide o texto em chunks por parágrafo e garante que nenhum chunk seja excessivamente grande.
@@ -40,7 +62,6 @@ function splitIntoChunks(text: string, maxChunkLength: number = 4000): string[] 
     if (!trimmed) continue;
     
     if (trimmed.length > maxChunkLength) {
-      // Se um parágrafo for gigante, quebra ele em partes menores
       for (let i = 0; i < trimmed.length; i += maxChunkLength) {
         chunks.push(trimmed.substring(i, i + maxChunkLength));
       }
@@ -56,23 +77,18 @@ function splitIntoChunks(text: string, maxChunkLength: number = 4000): string[] 
  */
 export async function processDocument(fileBuffer: Buffer, fileName: string, channelId: string = 'global') {
   const client = getOpenAI();
-
-  // 1. Extração de texto
   const text = fileBuffer.toString('utf-8');
-
-  // 2. Chunks (agora com proteção de tamanho)
   const chunks = splitIntoChunks(text);
+  
   if (chunks.length === 0) {
     throw new Error("Documento vazio ou sem conteúdo legível.");
   }
 
-  // 3. Vetorização via OpenAI Embeddings (batch)
   const embeddingResponse = await client.embeddings.create({
     model: "text-embedding-3-small",
     input: chunks,
   });
 
-  // 4. Salvar no banco vetorial em memória
   for (let i = 0; i < chunks.length; i++) {
     vectorStore.push({
       id: uuidv4(),
@@ -82,11 +98,30 @@ export async function processDocument(fileBuffer: Buffer, fileName: string, chan
     });
   }
 
+  saveVectorStore();
   return { success: true, chunksProcessed: chunks.length };
 }
 
 /**
- * Calcula similaridade por Cosseno entre dois vetores
+ * Transcreve áudio usando OpenAI Whisper
+ */
+export async function transcribeAudio(audioBuffer: Buffer): Promise<string> {
+  const client = getOpenAI();
+  
+  // Whisper espera um arquivo real ou stream com nome/mimetype
+  // Criamos um File fake para o SDK do Node
+  const file = await OpenAI.toFile(audioBuffer, "audio.ogg", { type: "audio/ogg" });
+
+  const response = await client.audio.transcriptions.create({
+    model: "whisper-1",
+    file: file,
+  });
+
+  return response.text;
+}
+
+/**
+ * Calcula similaridade por Cosseno
  */
 function cosineSimilarity(A: number[], B: number[]): number {
   let dot = 0, mA = 0, mB = 0;
@@ -100,11 +135,10 @@ function cosineSimilarity(A: number[], B: number[]): number {
 }
 
 /**
- * Busca os N chunks mais relevantes para a query
+ * Busca os N chunks mais relevantes
  */
-export async function searchContext(query: string, channelId: string, topK: number = 3): Promise<string[]> {
+export async function searchContext(query: string, channelId: string, topK: number = 5): Promise<string[]> {
   const client = getOpenAI();
-
   if (vectorStore.length === 0) return [];
 
   const queryEmbeddingRes = await client.embeddings.create({
@@ -114,26 +148,26 @@ export async function searchContext(query: string, channelId: string, topK: numb
 
   const queryVec = queryEmbeddingRes.data[0].embedding;
 
-  // Filtrar por canal e calcular similaridade
   const relevantDocs = vectorStore
     .filter(doc => doc.metadata.channelId === 'global' || doc.metadata.channelId === channelId)
     .map(doc => ({ text: doc.text, score: cosineSimilarity(queryVec, doc.embedding) }))
     .sort((a, b) => b.score - a.score)
+    .filter(d => d.score > 0.3) // Filtro de relevância mínima
     .slice(0, topK);
 
   return relevantDocs.map(d => d.text);
 }
 
 /**
- * RAG completo: busca contexto + geração de resposta via OpenAI
+ * RAG completo: busca contexto + geração de resposta
  */
 export async function generateRagResponse(userMessage: string, channelId: string, leadInfo?: { name?: string }): Promise<string> {
   const client = getOpenAI();
-
   const contextChunks = await searchContext(userMessage, channelId);
+  
   const contextText = contextChunks.length > 0
-    ? contextChunks.join('\n\n---\n\n')
-    : "Nenhum dado específico encontrado na base. Responda cordialmente com base nos conhecimentos gerais da campanha.";
+    ? contextChunks.join('\n\n')
+    : "Diga apenas que é assessor do Daniel Soranz e pergunte como pode ajudar, pois não encontrou detalhes específicos sobre este assunto na base.";
 
   const leadName = leadInfo?.name || "Eleitor(a)";
 
@@ -142,27 +176,26 @@ export async function generateRagResponse(userMessage: string, channelId: string
     messages: [
       {
         role: "system",
-        content: `Você é um assessor de campanha política humanizado e inteligente. 
-Seu objetivo é conversar com o eleitor(a) de forma cordial, empática e prestativa.
+        content: `Você é um assessor direto do candidato Daniel Soranz. 
+Sua missão é dar respostas CURTAS, DIRETAS e sempre baseadas no contexto abaixo.
 
-Estamos conversando com: ${leadName}. Use o nome dele(a) ocasionalmente para ser mais próximo.
+Regras de Ouro:
+1. Responda em no máximo 2 ou 3 frases curtas.
+2. Seja objetivo. Se a resposta estiver no contexto, use-a. 
+3. Se não souber, diga: "Ainda não tenho essa informação confirmada, mas posso anotar para nossa equipe te responder."
+4. Trate o eleitor pelo nome (${leadName}) de forma natural.
+5. Foco total em propostas e ações do Daniel Soranz.
 
-Use o CONTEXTO abaixo (extraído da nossa base de conhecimento) para fundamentar suas respostas.
-Se a informação solicitada não estiver no contexto, seja honesto e diga que não tem essa informação agora, mas que pode anotar o contato para um assessor humano retornar.
-
-Diretrizes:
-1. Responda como um humano, não use linguagem robótica.
-2. Seja conciso mas acolhedor.
-3. Chame o contato de eleitor(a) se não souber o nome, mas aqui o nome identificado é: ${leadName}.
-
-CONTEXTO DA CAMPANHA:
+CONTEXTO:
 ${contextText}`
       },
       { role: "user", content: userMessage }
     ],
-    max_tokens: 400,
-    temperature: 0.7,
+    max_tokens: 250,
+    temperature: 0.5, // Menos criatividade, mais precisão
   });
 
-  return response.choices[0]?.message?.content?.trim() || "Desculpe, tive um problema técnico. Posso te ajudar em algo mais?";
+  return response.choices[0]?.message?.content?.trim() || "Posso te ajudar em algo mais?";
+}
+écnico. Posso te ajudar em algo mais?";
 }
