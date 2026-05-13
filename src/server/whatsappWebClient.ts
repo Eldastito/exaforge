@@ -105,11 +105,12 @@ function resetState() {
   }
 }
 
-function destroyClient() {
-  if (client) {
-    client.destroy().catch(() => {});
+async function destroyClient() {
+  const c = client;
+  resetState(); // reseta primeiro para não permitir chamadas reentrantes
+  if (c) {
+    try { await c.destroy(); } catch { /* ignore */ }
   }
-  resetState();
 }
 
 export async function initializeWhatsAppWeb(io: any) {
@@ -122,15 +123,38 @@ export async function initializeWhatsAppWeb(io: any) {
   clientStatus = 'connecting';
   currentQrUrl = null;
 
-  // Limpeza de lockfile para evitar erro EBUSY em restarts
-  const lockfilePath = './.wwebjs_auth/session/lockfile';
-  if (existsSync(lockfilePath)) {
-    try {
-      const { unlinkSync } = await import('fs');
-      unlinkSync(lockfilePath);
-      console.log('[WA Web] Lockfile removido para nova conexão.');
-    } catch (e) {
-      console.warn('[WA Web] Aviso: Lockfile encontrado mas não pôde ser removido. O Chrome pode já estar rodando.');
+  // Limpeza agressiva de lockfiles para evitar erro EBUSY em restarts
+  const sessionDir = './.wwebjs_auth/session';
+  const lockFiles = [
+    `${sessionDir}/lockfile`,
+    `${sessionDir}/SingletonLock`,
+    `${sessionDir}/SingletonCookie`,
+  ];
+  for (const lf of lockFiles) {
+    if (existsSync(lf)) {
+      try {
+        const { unlinkSync } = await import('fs');
+        unlinkSync(lf);
+        console.log(`[WA Web] Lockfile removido: ${lf}`);
+      } catch {
+        // No Windows, o arquivo está bloqueado por um processo Chrome zumbi
+        // Mata o processo e aguarda antes de prosseguir
+        console.warn(`[WA Web] Lockfile preso: ${lf} — tentando matar Chrome zumbi...`);
+        try {
+          const { execSync } = await import('child_process');
+          if (process.platform === 'win32') {
+            execSync('taskkill /F /IM chrome.exe /T 2>nul || exit 0', { stdio: 'pipe' });
+          } else {
+            execSync('pkill -f chrome || true', { stdio: 'pipe' });
+          }
+          console.log('[WA Web] Processo Chrome finalizado. Aguardando 2s...');
+          await new Promise(r => setTimeout(r, 2000));
+          // Tenta novamente após matar
+          try { const { unlinkSync } = await import('fs'); unlinkSync(lf); } catch { /* ok */ }
+        } catch (killErr) {
+          console.warn('[WA Web] Não foi possível matar o Chrome:', killErr);
+        }
+      }
     }
   }
 
@@ -388,11 +412,11 @@ export async function initializeWhatsAppWeb(io: any) {
   });
 }
 
-export function disconnectWhatsAppWeb() {
+export async function disconnectWhatsAppWeb() {
   if (client) {
-    client.logout().catch(console.error);
-    client.destroy().catch(console.error);
+    // Não chamamos logout() pois pode lançar TargetCloseError se o browser já fechou.
+    // destroy() é suficiente para encerrar o processo Puppeteer/Chrome.
     if (ioInstance) ioInstance.emit('wa_web_status', { status: 'disconnected' });
-    resetState();
+    await destroyClient();
   }
 }
