@@ -1,10 +1,13 @@
-import React from 'react';
-import { Users, Search, Phone, Mail, MoreVertical, MessageCircle } from 'lucide-react';
+import { Users, Search, Phone, MoreVertical, MessageCircle, Clock } from 'lucide-react';
 import { useStore } from '@/src/store/useStore';
+import { formatDistanceToNow, format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export function ContactsPanel() {
   const { contacts } = useStore();
-  const contactList = Object.values(contacts);
+  const contactList = Object.values(contacts).sort((a, b) => {
+    return new Date(b.lastInteractionAt || 0).getTime() - new Date(a.lastInteractionAt || 0).getTime();
+  });
 
   return (
     <div className="flex flex-col h-full bg-slate-950">
@@ -47,14 +50,14 @@ export function ContactsPanel() {
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-slate-100">{contact.name}</p>
-                        <p className="text-xs text-slate-500">ID: {contact.id.split('@')[0]}</p>
+                        <p className="text-[10px] text-slate-500 uppercase tracking-tight">WhatsApp Web</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2 text-sm text-slate-300">
                       <Phone className="w-3.5 h-3.5 text-slate-500" />
-                      {contact.number || contact.id.split('@')[0]}
+                      {contact.number}
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -63,7 +66,14 @@ export function ContactsPanel() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-400">
-                    Hoje, 14:30
+                    <div className="flex flex-col">
+                       <span>{contact.lastInteractionAt ? format(new Date(contact.lastInteractionAt), "dd/MM 'às' HH:mm") : '--'}</span>
+                       {contact.lastInteractionAt && (
+                         <span className="text-[10px] text-slate-500">
+                           {formatDistanceToNow(new Date(contact.lastInteractionAt), { addSuffix: true, locale: ptBR })}
+                         </span>
+                       )}
+                    </div>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">

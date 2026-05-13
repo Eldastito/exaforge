@@ -192,9 +192,13 @@ export async function initializeWhatsAppWeb(io: any) {
     if (!incomingText && !msg.hasMedia) return;
 
     if (ioInstance) {
+      // Limpa o número (remove @c.us ou @lid)
+      const cleanNumber = senderId.split('@')[0];
+      
       ioInstance.emit('new_message', {
         contactId: senderId, 
         contactName: contactName,
+        contactNumber: cleanNumber, // Envia o número limpo
         provider: 'whatsapp',
         text: incomingText, 
         sender: 'contact',

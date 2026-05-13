@@ -6,6 +6,7 @@ export type Contact = {
   name: string;
   number: string;
   avatar?: string;
+  lastInteractionAt?: string;
 };
 
 export type Message = {
@@ -188,19 +189,23 @@ export const useStore = create<AppState>()(
     };
   }),
 
-  receiveMessage: (contactId, text, sender = 'contact', contactName) => set((state) => {
+  receiveMessage: (contactId, text, sender = 'contact', contactName, contactNumber) => set((state) => {
     // Check if contact exists, if not create it
     let newContacts = { ...state.contacts };
     if (!newContacts[contactId]) {
       newContacts[contactId] = {
         id: contactId,
         name: contactName || `Contato ${contactId.slice(0, 4)}`,
-        number: contactId,
+        number: contactNumber || contactId,
       };
-    } else if (contactName && newContacts[contactId].name.startsWith('Contato ')) {
-      // Atualiza o nome se antes era o padrão genérico
+    }
+    if (contactName && newContacts[contactId].name.startsWith('Contato ')) {
       newContacts[contactId].name = contactName;
     }
+    if (contactNumber) {
+      newContacts[contactId].number = contactNumber;
+    }
+    newContacts[contactId].lastInteractionAt = new Date().toISOString();
 
     // Find open ticket for contact
     let ticketId = Object.keys(state.tickets).find(id => state.tickets[id].contactId === contactId);

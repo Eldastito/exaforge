@@ -1,3 +1,6 @@
-2026/05/12-21:25:38.695 1100c Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
-2026/05/12-21:25:38.701 1100c Recovering log #4
-2026/05/12-21:25:38.704 1100c Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Local Storage\leveldb/000004.log 
+2026/05/12-21:40:55.897 aa1c Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
+2026/05/12-21:40:55.903 aa1c Recovering log #4
+2026/05/12-21:40:55.907 aa1c Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Local Storage\leveldb/000004.log 
+2026/05/12-21:41:55.927 10b18 Level-0 table #6: started
+2026/05/12-21:41:55.933 10b18 Level-0 table #6: 19730 bytes OK
+2026/05/12-21:41:55.938 10b18 Delete type=0 #4
