@@ -51,19 +51,16 @@ export function Sidebar() {
           </div>
         </div>
 
-        <div className="mt-4 flex justify-between px-2 text-slate-500">
-          <Settings 
-            className="h-4 w-4 cursor-pointer hover:text-indigo-400 transition-colors" 
-            onClick={() => setViewMode('channels')} 
-          />
-          <Bell 
-            className="h-4 w-4 cursor-pointer hover:text-indigo-400 transition-colors" 
-            onClick={() => alert('Nenhuma notificação nova no momento.')} 
-          />
-          <LogOut 
-            className="h-4 w-4 cursor-pointer hover:text-red-400 transition-colors" 
-            onClick={() => window.location.reload()} 
-          />
+        <div className="mt-4 flex justify-between px-3 text-slate-500">
+          <button onClick={() => setViewMode('channels')} className="p-1 hover:text-indigo-400 transition-colors" title="Configurações">
+            <Settings className="h-5 w-5" />
+          </button>
+          <button onClick={() => alert('Nenhuma notificação nova no momento.')} className="p-1 hover:text-indigo-400 transition-colors" title="Alertas">
+            <Bell className="h-5 w-5" />
+          </button>
+          <button onClick={() => window.location.reload()} className="p-1 hover:text-red-400 transition-colors" title="Sair / Recarregar">
+            <LogOut className="h-5 w-5" />
+          </button>
         </div>
       </div>
     </div>

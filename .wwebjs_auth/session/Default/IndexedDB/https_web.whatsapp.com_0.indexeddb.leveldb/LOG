@@ -1,14 +1,25 @@
-2026/05/12-22:15:40.233 ee24 Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2026/05/12-22:15:40.234 ee24 Recovering log #200
-2026/05/12-22:15:40.249 ee24 Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000200.log 
-2026/05/12-22:16:10.567 c9d0 Level-0 table #206: started
-2026/05/12-22:16:10.605 c9d0 Level-0 table #206: 1322749 bytes OK
-2026/05/12-22:16:10.608 c9d0 Delete type=0 #200
-2026/05/12-22:16:44.634 c9d0 Compacting 1@1 + 2@2 files
-2026/05/12-22:16:44.695 c9d0 Generated table #207@1: 42746 keys, 2198322 bytes
-2026/05/12-22:16:44.711 c9d0 Generated table #208@1: 19270 keys, 642744 bytes
-2026/05/12-22:16:44.711 c9d0 Compacted 1@1 + 2@2 files => 2841066 bytes
-2026/05/12-22:16:44.712 c9d0 compacted to: files[ 0 0 2 0 0 0 0 ]
-2026/05/12-22:16:44.712 c9d0 Delete type=2 #202
-2026/05/12-22:16:44.712 c9d0 Delete type=2 #203
-2026/05/12-22:16:44.712 c9d0 Delete type=2 #206
+2026/05/12-22:36:53.415 e384 Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/05/12-22:36:53.417 e384 Recovering log #205
+2026/05/12-22:36:53.467 e384 Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000205.log 
+2026/05/12-22:36:57.197 818c Level-0 table #211: started
+2026/05/12-22:36:57.239 818c Level-0 table #211: 1282001 bytes OK
+2026/05/12-22:36:57.242 818c Delete type=0 #205
+2026/05/12-22:36:58.380 7cfc Compacting 1@1 + 2@2 files
+2026/05/12-22:36:58.489 7cfc Generated table #212@1: 43432 keys, 2199464 bytes
+2026/05/12-22:36:58.572 7cfc Generated table #213@1: 20591 keys, 703716 bytes
+2026/05/12-22:36:58.573 7cfc Compacted 1@1 + 2@2 files => 2903180 bytes
+2026/05/12-22:36:58.575 7cfc compacted to: files[ 0 0 2 0 0 0 0 ]
+2026/05/12-22:37:01.065 818c Level-0 table #215: started
+2026/05/12-22:37:01.122 818c Level-0 table #215: 1249706 bytes OK
+2026/05/12-22:37:01.126 818c Delete type=2 #207
+2026/05/12-22:37:01.126 818c Delete type=2 #208
+2026/05/12-22:37:01.126 818c Delete type=0 #210
+2026/05/12-22:37:01.126 818c Delete type=2 #211
+2026/05/12-22:37:07.483 818c Compacting 1@1 + 2@2 files
+2026/05/12-22:37:07.595 818c Generated table #216@1: 43333 keys, 2198886 bytes
+2026/05/12-22:37:07.626 818c Generated table #217@1: 20144 keys, 629326 bytes
+2026/05/12-22:37:07.626 818c Compacted 1@1 + 2@2 files => 2828212 bytes
+2026/05/12-22:37:07.629 818c compacted to: files[ 0 0 2 0 0 0 0 ]
+2026/05/12-22:37:07.630 818c Delete type=2 #212
+2026/05/12-22:37:07.630 818c Delete type=2 #213
+2026/05/12-22:37:07.631 818c Delete type=2 #215

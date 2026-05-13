@@ -192,9 +192,16 @@ export async function initializeWhatsAppWeb(io: any) {
     if (!incomingText && !msg.hasMedia) return;
 
     if (ioInstance) {
-      // Tenta obter o contato real para pegar o número formatado
-      let contactName = msg._data?.notifyName || contact.name || contact.pushname || senderId.split('@')[0];
-      let cleanNumber = contact.number || senderId.split('@')[0];
+      let contactName = "Eleitor(a)";
+      let cleanNumber = senderId.split('@')[0];
+
+      try {
+        const contact = await msg.getContact();
+        contactName = msg._data?.notifyName || contact.pushname || contact.name || senderId.split('@')[0];
+        cleanNumber = contact.number || senderId.split('@')[0];
+      } catch (e) {
+        console.warn('[WA Web] Erro ao obter detalhes do contato:', e);
+      }
 
       // Se for um ID estranho (LID), tenta limpar ou manter o número real
       if (cleanNumber.includes('lid')) {

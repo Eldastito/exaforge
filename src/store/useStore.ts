@@ -253,8 +253,11 @@ export const useStore = create<AppState>()(
       partialize: (state) => ({
         viewMode: state.viewMode,
         activeTicketId: state.activeTicketId,
-        // Persiste channels para salvar credenciais configuradas (token, etc.)
         channels: state.channels,
+        ragDocuments: state.ragDocuments,
+        contacts: state.contacts,
+        tickets: state.tickets,
+        messages: state.messages
       }),
     }
   )
