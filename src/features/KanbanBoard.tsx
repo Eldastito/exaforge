@@ -55,67 +55,80 @@ export function KanbanBoard() {
                         return (
                           // @ts-expect-error React 18+ types issue with hello-pangea/dnd
                           <Draggable key={ticket.id} draggableId={ticket.id} index={index}>
-                            {(provided, snapshot) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                onClick={() => setActiveTicket(ticket.id)}
-                                className={`group relative mb-3 flex flex-col gap-3 rounded-lg border p-4 shadow-sm transition-all
-                                  ${activeTicketId === ticket.id ? 'border-primary bg-zinc-800' : 'border-zinc-800 bg-zinc-950 hover:border-zinc-700'}
-                                  ${snapshot.isDragging ? 'rotate-2 scale-105 shadow-xl ring-2 ring-primary bg-zinc-800' : ''}`}
-                              >
-                                {ticket.unreadCount > 0 && (
-                                  <div className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground shadow-lg animate-pulse">
-                                    {ticket.unreadCount}
-                                  </div>
-                                )}
-                                
-                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-2">
-                                    {contact.avatar ? (
-                                      <img src={contact.avatar} alt={contact.name} className="h-8 w-8 rounded-full border border-zinc-800" />
-                                    ) : (
-                                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800">
-                                        <User className="h-4 w-4 text-zinc-400" />
+                            {(provided, snapshot) => {
+                              // Busca a última mensagem do CONTATO para o preview, ignorando a da IA se houver
+                              const contactMsgs = ticketMessages.filter(m => m.sender === 'contact');
+                              const previewMsg = contactMsgs.length > 0 ? contactMsgs[contactMsgs.length - 1] : lastMsg;
+
+                              return (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  onClick={() => setActiveTicket(ticket.id)}
+                                  className={`group relative mb-4 flex flex-col gap-4 rounded-xl border p-4 shadow-xl transition-all cursor-pointer
+                                    ${activeTicketId === ticket.id ? 'border-indigo-500 bg-zinc-900' : 'border-zinc-800 bg-zinc-950 hover:border-zinc-700'}
+                                    ${snapshot.isDragging ? 'rotate-1 scale-105 shadow-2xl ring-2 ring-indigo-500 bg-zinc-900 z-50' : ''}`}
+                                >
+                                  {/* Badge de Não Lidas - Canto Superior Direito */}
+                                  {ticket.unreadCount > 0 && (
+                                    <div className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 text-[11px] font-bold text-white shadow-lg border-2 border-zinc-950 z-10">
+                                      {ticket.unreadCount}
+                                    </div>
+                                  )}
+                                  
+                                  {/* Cabeçalho do Card: Avatar, Nome, Tel e Prioridade */}
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-center gap-3">
+                                      {contact.avatar ? (
+                                        <img src={contact.avatar} alt={contact.name} className="h-12 w-12 rounded-full border-2 border-zinc-800 object-cover" />
+                                      ) : (
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-800 border-2 border-zinc-700">
+                                          <User className="h-6 w-6 text-zinc-500" />
+                                        </div>
+                                      )}
+                                      <div className="flex flex-col">
+                                        <h4 className="text-[15px] font-bold text-zinc-100 tracking-tight">{contact.name}</h4>
+                                        <span className="text-[13px] text-zinc-500 font-medium">
+                                          {contact.number || 'Sem telefone'}
+                                        </span>
                                       </div>
-                                    )}
-                                    <div>
-                                      <h4 className="text-sm font-medium leading-none text-zinc-100">{contact.name}</h4>
-                                      <span className="text-xs text-zinc-500">{contact.number}</span>
+                                    </div>
+                                    
+                                    <div className="flex flex-col items-end">
+                                       <Badge variant="outline" className={`rounded-full px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider
+                                          ${ticket.priority === 'alta' ? 'border-red-500 text-red-500 bg-red-500/5' : 
+                                            ticket.priority === 'media' ? 'border-amber-500 text-amber-500 bg-amber-500/5' : 
+                                            'border-indigo-500 text-indigo-500 bg-indigo-500/5'}
+                                       `}>
+                                          {ticket.priority === 'media' ? 'Media' : 
+                                           ticket.priority === 'alta' ? 'Alta' : 'Baixa'}
+                                       </Badge>
                                     </div>
                                   </div>
-                                  <Badge variant="outline" className={
-                                    ticket.priority === 'alta' ? 'border-red-500/50 text-red-500' : 
-                                    ticket.priority === 'media' ? 'border-yellow-500/50 text-yellow-500' : 'border-blue-500/50 text-blue-500'
-                                  }>
-                                    {ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}
-                                  </Badge>
-                                </div>
-                                
-                                <div className="flex flex-col gap-1">
-                                  <p className="line-clamp-2 text-xs text-zinc-400">
-                                    {lastMsg ? lastMsg.text : 'Nenhuma mensagem'}
-                                  </p>
-                                </div>
-                                
-                                <div className="flex items-center justify-between text-xs text-zinc-500">
-                                  <div className="flex items-center gap-1">
-                                    <Clock className="h-3 w-3" />
-                                    {formatDistanceToNow(new Date(ticket.lastMessageAt), { addSuffix: true, locale: ptBR })}
+                                  
+                                  {/* Preview da Mensagem (Focado no Eleitor) */}
+                                  <div className="mt-1">
+                                    <p className="line-clamp-2 text-[14px] text-zinc-400 leading-relaxed">
+                                      {previewMsg ? previewMsg.text : 'Nenhuma interação registrada'}
+                                    </p>
                                   </div>
-                                  <div className="flex items-center gap-1">
-                                     {lastMsg?.sender === 'human' ? (
-                                       <span className="text-primary/70">Você</span>
-                                     ) : lastMsg?.sender === 'bot' ? (
-                                        <span className="text-indigo-400 font-bold uppercase text-[10px] tracking-wider">Assessor Daniel Soranz</span>
-                                     ) : (
-                                        <span className="text-emerald-400/70 font-semibold">Eleitor(a)</span>
-                                     )}
+                                  
+                                  {/* Rodapé: Tempo e Rótulo */}
+                                  <div className="flex items-center justify-between mt-1">
+                                    <div className="flex items-center gap-2 text-zinc-500">
+                                      <Clock className="h-4 w-4" />
+                                      <span className="text-[12px]">
+                                        {formatDistanceToNow(new Date(ticket.lastMessageAt), { addSuffix: false, locale: ptBR })}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center">
+                                       <span className="text-[12px] font-bold text-emerald-500/90 tracking-wide">Eleitor(a)</span>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            )}
+                              );
+                            }}
                           </Draggable>
                         );
                       })}

@@ -204,8 +204,13 @@ export async function initializeWhatsAppWeb(io: any) {
       }
 
       // Se for um ID estranho (LID), tenta limpar ou manter o número real
-      if (cleanNumber.includes('lid')) {
+      if (cleanNumber.includes('lid') || cleanNumber.includes('c.us')) {
         cleanNumber = cleanNumber.split(':')[0].split('@')[0];
+      }
+
+      // Adiciona o + se for número brasileiro puro
+      if (cleanNumber.length >= 10 && !cleanNumber.startsWith('+')) {
+        cleanNumber = '+' + cleanNumber;
       }
 
       console.log(`[WA Web] Mensagem de ${contactName} (${cleanNumber})`);
