@@ -1,3 +1,4 @@
-2026/05/12-22:45:34.816 fadc Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Sync Data\LevelDB/MANIFEST-000001
-2026/05/12-22:45:34.827 fadc Recovering log #3
-2026/05/12-22:45:34.828 fadc Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Sync Data\LevelDB/000003.log 
+2026/05/12-22:48:18.161 d898 Creating DB C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Sync Data\LevelDB since it was missing.
+2026/05/12-22:48:18.194 d898 Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Sync Data\LevelDB/MANIFEST-000001
+2026/05/12-22:48:18.194 d898 Recovering log #3
+2026/05/12-22:48:18.195 d898 Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Sync Data\LevelDB/000003.log 

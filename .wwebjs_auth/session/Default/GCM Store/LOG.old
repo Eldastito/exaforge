@@ -1,2 +1,4 @@
-2026/05/12-22:45:43.317 d2b4 Creating DB C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\GCM Store since it was missing.
-2026/05/12-22:45:43.349 d2b4 Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\GCM Store/MANIFEST-000001
+2026/05/12-22:48:25.473 42a4 Creating DB C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\GCM Store since it was missing.
+2026/05/12-22:48:25.502 42a4 Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\GCM Store/MANIFEST-000001
+2026/05/12-22:48:25.503 42a4 Recovering log #3
+2026/05/12-22:48:25.504 42a4 Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\GCM Store/000003.log 

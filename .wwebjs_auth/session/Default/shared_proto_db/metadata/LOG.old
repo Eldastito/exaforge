@@ -1,3 +1,4 @@
-2026/05/12-22:45:34.954 a53c Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\shared_proto_db\metadata/MANIFEST-000001
-2026/05/12-22:45:34.955 a53c Recovering log #3
-2026/05/12-22:45:34.956 a53c Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\shared_proto_db\metadata/000003.log 
+2026/05/12-22:48:18.299 1110c Creating DB C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\shared_proto_db\metadata since it was missing.
+2026/05/12-22:48:18.316 1110c Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\shared_proto_db\metadata/MANIFEST-000001
+2026/05/12-22:48:18.316 1110c Recovering log #3
+2026/05/12-22:48:18.317 1110c Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\shared_proto_db\metadata/000003.log 

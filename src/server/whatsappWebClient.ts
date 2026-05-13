@@ -198,19 +198,32 @@ export async function initializeWhatsAppWeb(io: any) {
       try {
         const contact = await msg.getContact();
         contactName = msg._data?.notifyName || contact.pushname || contact.name || senderId.split('@')[0];
-        cleanNumber = contact.number || senderId.split('@')[0];
+        
+        // Tenta pegar o número real. Às vezes o contact.number é o LID, 
+        // mas o contact.id.user em chats @c.us costuma ser o número.
+        const rawNumber = contact.number || contact.id.user;
+        
+        // Formatador de Telefone (Ex: 5521999947477 -> +55 21 99994-7477)
+        if (rawNumber && rawNumber.length >= 12 && rawNumber.startsWith('55')) {
+          const ddi = rawNumber.substring(0, 2);
+          const ddd = rawNumber.substring(2, 4);
+          const firstPart = rawNumber.substring(4, rawNumber.length - 4);
+          const lastPart = rawNumber.substring(rawNumber.length - 4);
+          cleanNumber = `+${ddi} ${ddd} ${firstPart}-${lastPart}`;
+        } else {
+          cleanNumber = rawNumber ? `+${rawNumber}` : senderId.split('@')[0];
+        }
+
+        // Se ainda for um ID técnico (LID) muito longo e sem sentido
+        if (cleanNumber.length > 15 && !cleanNumber.includes(' ')) {
+           // Tenta o pushname como último recurso para o número se disponível no JID
+           if (senderId.includes('@c.us') && !senderId.includes('lid')) {
+              const jidNumber = senderId.split('@')[0];
+              cleanNumber = `+${jidNumber}`;
+           }
+        }
       } catch (e) {
         console.warn('[WA Web] Erro ao obter detalhes do contato:', e);
-      }
-
-      // Se for um ID estranho (LID), tenta limpar ou manter o número real
-      if (cleanNumber.includes('lid') || cleanNumber.includes('c.us')) {
-        cleanNumber = cleanNumber.split(':')[0].split('@')[0];
-      }
-
-      // Adiciona o + se for número brasileiro puro
-      if (cleanNumber.length >= 10 && !cleanNumber.startsWith('+')) {
-        cleanNumber = '+' + cleanNumber;
       }
 
       console.log(`[WA Web] Mensagem de ${contactName} (${cleanNumber})`);

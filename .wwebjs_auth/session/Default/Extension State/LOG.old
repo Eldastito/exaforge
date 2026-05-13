@@ -1,3 +1,4 @@
-2026/05/12-22:45:34.983 a53c Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Extension State/MANIFEST-000001
-2026/05/12-22:45:34.983 a53c Recovering log #2
-2026/05/12-22:45:34.984 a53c Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Extension State/000002.log 
+2026/05/12-22:48:18.340 5a10 Creating DB C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Extension State since it was missing.
+2026/05/12-22:48:18.355 5a10 Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Extension State/MANIFEST-000001
+2026/05/12-22:48:18.356 5a10 Recovering log #2
+2026/05/12-22:48:18.356 5a10 Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Extension State/000002.log 
