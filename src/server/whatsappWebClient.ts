@@ -63,6 +63,18 @@ export function initializeWhatsAppWeb(io: any) {
   clientStatus = 'connecting';
   currentQrUrl = null;
 
+  // Limpeza de lockfile para evitar erro EBUSY em restarts
+  const lockfilePath = './.wwebjs_auth/session/lockfile';
+  if (existsSync(lockfilePath)) {
+    try {
+      const { unlinkSync } = await import('fs');
+      unlinkSync(lockfilePath);
+      console.log('[WA Web] Lockfile removido para nova conexão.');
+    } catch (e) {
+      console.warn('[WA Web] Aviso: Lockfile encontrado mas não pôde ser removido. O Chrome pode já estar rodando.');
+    }
+  }
+
   const chromePath = findChromePath();
   if (chromePath) {
     console.log(`[WA Web] Usando Chrome: ${chromePath}`);

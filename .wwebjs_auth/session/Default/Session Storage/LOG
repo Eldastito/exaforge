@@ -1,4 +1,3 @@
-2026/05/12-20:52:07.260 e520 Creating DB C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Session Storage since it was missing.
-2026/05/12-20:52:07.317 e520 Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Session Storage/MANIFEST-000001
-2026/05/12-20:52:07.322 e520 Recovering log #3
-2026/05/12-20:52:07.333 e520 Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Session Storage/000003.log 
+2026/05/12-21:25:39.680 1100c Reusing MANIFEST C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Session Storage/MANIFEST-000001
+2026/05/12-21:25:39.684 1100c Recovering log #3
+2026/05/12-21:25:39.695 1100c Reusing old log C:\Users\miche\Documents\exaforge-a-ia-que-entende-o-seu-negócio\.wwebjs_auth\session\Default\Session Storage/000003.log 
