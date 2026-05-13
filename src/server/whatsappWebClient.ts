@@ -199,28 +199,36 @@ export async function initializeWhatsAppWeb(io: any) {
         const contact = await msg.getContact();
         contactName = msg._data?.notifyName || contact.pushname || contact.name || senderId.split('@')[0];
         
-        // Tenta pegar o número real. Às vezes o contact.number é o LID, 
-        // mas o contact.id.user em chats @c.us costuma ser o número.
-        const rawNumber = contact.number || contact.id.user;
+        // ESTRATÉGIA DE EXTRAÇÃO AGRESSIVA (Anti-LID)
+        // O WhatsApp está trocando números por LIDs (265...). Vamos buscar o JID real (@c.us)
+        // que quase sempre contém o número de telefone real.
+        const possibleJids = [
+          msg.from,
+          msg.author,
+          msg._data?.id?.participant,
+          msg._data?.from,
+          msg._data?.author,
+          contact.id?._serialized
+        ].filter(id => id && id.includes('@c.us') && !id.includes('lid'));
+
+        // Se encontrou algum ID que não seja LID, esse é o nosso número!
+        let rawNumber = "";
+        if (possibleJids.length > 0) {
+          rawNumber = possibleJids[0].split('@')[0];
+        } else {
+          rawNumber = contact.number || contact.id.user;
+        }
         
         // Formatador de Telefone (Ex: 5521999947477 -> +55 21 99994-7477)
-        if (rawNumber && rawNumber.length >= 12 && rawNumber.startsWith('55')) {
+        if (rawNumber && rawNumber.length >= 10 && rawNumber.startsWith('55')) {
           const ddi = rawNumber.substring(0, 2);
           const ddd = rawNumber.substring(2, 4);
-          const firstPart = rawNumber.substring(4, rawNumber.length - 4);
           const lastPart = rawNumber.substring(rawNumber.length - 4);
-          cleanNumber = `+${ddi} ${ddd} ${firstPart}-${lastPart}`;
+          const middlePart = rawNumber.substring(4, rawNumber.length - 4);
+          cleanNumber = `+${ddi} ${ddd} ${middlePart}-${lastPart}`;
         } else {
-          cleanNumber = rawNumber ? `+${rawNumber}` : senderId.split('@')[0];
-        }
-
-        // Se ainda for um ID técnico (LID) muito longo e sem sentido
-        if (cleanNumber.length > 15 && !cleanNumber.includes(' ')) {
-           // Tenta o pushname como último recurso para o número se disponível no JID
-           if (senderId.includes('@c.us') && !senderId.includes('lid')) {
-              const jidNumber = senderId.split('@')[0];
-              cleanNumber = `+${jidNumber}`;
-           }
+          // Se for um número estrangeiro ou ID curto, apenas garante o +
+          cleanNumber = rawNumber.startsWith('+') ? rawNumber : `+${rawNumber}`;
         }
       } catch (e) {
         console.warn('[WA Web] Erro ao obter detalhes do contato:', e);
