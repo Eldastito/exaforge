@@ -37,7 +37,10 @@ export function Sidebar() {
       </div>
 
       <div className="border-t border-slate-800 p-4 bg-slate-900/30">
-        <div className="flex items-center gap-3 rounded-lg p-2 hover:bg-slate-800 transition-colors cursor-pointer border border-transparent hover:border-slate-700">
+        <div 
+          onClick={() => setViewMode('kanban')}
+          className="flex items-center gap-3 rounded-lg p-2 hover:bg-slate-800 transition-colors cursor-pointer border border-transparent hover:border-slate-700"
+        >
           <div className="relative shadow-sm">
              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Operator" className="h-9 w-9 rounded-full bg-slate-800 border border-slate-700" />
              <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-slate-950 bg-emerald-500" />
@@ -49,9 +52,18 @@ export function Sidebar() {
         </div>
 
         <div className="mt-4 flex justify-between px-2 text-slate-500">
-          <Settings className="h-4 w-4 cursor-pointer hover:text-slate-300 transition-colors" />
-          <Bell className="h-4 w-4 cursor-pointer hover:text-slate-300 transition-colors" />
-          <LogOut className="h-4 w-4 cursor-pointer hover:text-slate-300 transition-colors" />
+          <Settings 
+            className="h-4 w-4 cursor-pointer hover:text-indigo-400 transition-colors" 
+            onClick={() => setViewMode('channels')} 
+          />
+          <Bell 
+            className="h-4 w-4 cursor-pointer hover:text-indigo-400 transition-colors" 
+            onClick={() => alert('Nenhuma notificação nova no momento.')} 
+          />
+          <LogOut 
+            className="h-4 w-4 cursor-pointer hover:text-red-400 transition-colors" 
+            onClick={() => window.location.reload()} 
+          />
         </div>
       </div>
     </div>

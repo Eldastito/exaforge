@@ -114,12 +114,14 @@ export function ChannelsPanel() {
   };
 
   const handleDisconnectWaWeb = async () => {
-     try {
-       await fetch('/api/wa-web/disconnect', { method: 'POST' });
-       setWaWebStatus('disconnected');
-     } catch(e) {
-       console.error(e);
-     }
+    setWaWebStatus('disconnected');
+    setWaWebQr(null);
+    setWaWebError(null);
+    try {
+      await fetch('/api/wa-web/disconnect', { method: 'POST' });
+    } catch(e) {
+      console.error(e);
+    }
   };
 
   const whatsapp = channels.find(c => c.provider === 'whatsapp');
